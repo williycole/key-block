@@ -11,7 +11,6 @@ import (
 
 func TrackPressedKeys(osSignalChan <-chan os.Signal, keyboardChan <-chan types.KeyboardEvent) error {
 	fmt.Println("start capturing keyboard input")
-
 	for {
 		select {
 		case <-time.After(5 * time.Minute):
@@ -29,6 +28,10 @@ func TrackPressedKeys(osSignalChan <-chan os.Signal, keyboardChan <-chan types.K
 				// log it and build the word
 				fmt.Printf("Received Key Down For: %v %v %v\n", keyEvent.Message, pressedKeyAsString, reflect.TypeOf(pressedKeyAsString))
 
+				var wordSlice = processPressedKeyStrings(pressedKeyAsString)
+				if len(wordSlice) > 0 {
+					fmt.Printf("New word found: %v\n", wordSlice)
+				}
 			}
 
 			continue
@@ -38,7 +41,6 @@ func TrackPressedKeys(osSignalChan <-chan os.Signal, keyboardChan <-chan types.K
 
 // todo consider renaming pressedKey and simplifying
 func convertKeyEventToString(keyEvent types.KeyboardEvent) string {
-
 	pressedKey := VirtualKeyToStringMap[uint16(keyEvent.VKCode)]
 
 	var keyEventType = getKeyEventType(keyEvent)
@@ -47,7 +49,6 @@ func convertKeyEventToString(keyEvent types.KeyboardEvent) string {
 	}
 
 	return pressedKey
-
 }
 
 func getKeyEventType(event types.KeyboardEvent) string {
@@ -66,23 +67,24 @@ func getKeyEventType(event types.KeyboardEvent) string {
 	}
 }
 
-// TODO
-func buildWordFromKeyDownMap(pressedKey string) string {
-	panic("method not implemented")
-}
+// todo consider swtich statmetn use
+// todo fix this keep it simple, get it to work, write tests, then make it better
+func processPressedKeyStrings(pressedKey string) []string {
+	fmt.Printf("Entering: processingPressedKeyStrings...\n")
+	// todo consider using length as capacity default, or handling a warning log for ui elsewhere
+	var wordSlice []string = make([]string, 10, 20)
+	// add to slice when not space
+	if pressedKey != "Space" {
+		wordSlice = append(wordSlice, pressedKey)
+	}
+	// if space return word
+	if pressedKey == "Space" {
 
-// TODO
-func detectNewWordBySpaceKeyDown(pressedKey string) string {
-	panic("method not implemented")
-}
-
-// TODO - probably let this be a map for prototyping but will be a db or cache in mem
-// TODO - this will be done with go routines for checking a lot of words super fast
-func checkBlockedWordsForCurrentWord(pressedKey string) string {
-	panic("method not implemented")
-}
-
-// TODO - here for poc lets just log this for now, eventually we want to use this event to kick off a lot of things
-func handleLogBlockedWordEvenDetected(pressedKey string) string {
-	panic("method not implemented")
+		fmt.Printf("Exiting bc Space:  processingPressedKeyStrings...\n")
+		return wordSlice
+	}
+	// else return the empty word slice and check it elsewhere
+	emptySlice := make([]string, 0)
+	fmt.Printf("Exiting empty:  processingPressedKeyStrings...\n")
+	return emptySlice
 }

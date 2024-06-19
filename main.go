@@ -37,6 +37,7 @@ func main() {
 // TODO look up more of this code to understand it / how go work
 func runKeyBlock() error {
 	// Buffer size depends on your need. The 100 is placeholder value.
+	// Initialize Keyboard Channel
 	keyboardChan := make(chan types.KeyboardEvent, 100)
 
 	if err := keyboard.Install(nil, keyboardChan); err != nil {
@@ -45,6 +46,7 @@ func runKeyBlock() error {
 
 	defer keyboard.Uninstall()
 
+	// Initialzie OS Channel
 	osSignalChan := make(chan os.Signal, 1)
 	signal.Notify(osSignalChan, os.Interrupt)
 
