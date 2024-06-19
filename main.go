@@ -1,6 +1,12 @@
 package main
 
-// TODO cleanup: consider this when thinking about external dependencies as apart of final cleanup https://chatgpt.com/share/95409b0a-d5fa-4fa9-89c4-61fbd00d4617
+// TODO cleanup: Add a thoughtful folder structure to code chaning method names as appropriate
+// TODO cleanup: Add idomatic comments to all methods
+// TODO cleanup: consider this when thinking about external dependencies as apart of final
+// TODO cleanup: consider error handling approach like anthony gg
+// TODO prev --> this may not matter though so look into binarys
+// TODO prev --> https://chatgpt.com/share/95409b0a-d5fa-4fa9-89c4-61fbd00d4617
+
 import (
 	"fmt"
 	"log"
@@ -14,7 +20,7 @@ import (
 	"github.com/moutend/go-hook/pkg/types"
 
 	// "golang.org/x/sys/windows"
-	"key-block/stringutils"
+	"key-block/keyEventMappingUtils"
 )
 
 func main() {
@@ -42,7 +48,8 @@ func runKeyBlock() error {
 	osSignalChan := make(chan os.Signal, 1)
 	signal.Notify(osSignalChan, os.Interrupt)
 
-	var trackedKeyEvents = stringutils.TrackPressedKeys(osSignalChan, keyboardChan)
+	// TODO: for all methods here, make a process method to handle them in order and keep main clean
+	var trackedKeyEvents = keyEventMappingUtils.TrackPressedKeys(osSignalChan, keyboardChan)
 
 	return trackedKeyEvents
 }

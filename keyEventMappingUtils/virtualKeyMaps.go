@@ -1,6 +1,6 @@
-package stringutils
+package keyEventMappingUtils
 
-var VirtualKeyMap = map[uint16]string{
+var VirtualKeyToStringMap = map[uint16]string{
 	// 0x08: "Backspace",
 	// 0x09: "Tab",
 	0x0D: "Enter",
