@@ -3,14 +3,45 @@ package keyEventMappingUtils
 import (
 	"fmt"
 	"os"
-	"reflect"
+	"strings"
 	"time"
 
 	"github.com/moutend/go-hook/pkg/types"
 )
 
+// todo consider this being the main function that gets kicked off for each new word if needed
+// func TrackPressedKeys(osSignalChan <-chan os.Signal, keyboardChan <-chan types.KeyboardEvent) error {
+// 	fmt.Println("start capturing keyboard input")
+// 	var wordSlice []string = make([]string, 10)
+// 	for {
+// 		select {
+// 		case <-time.After(5 * time.Minute):
+// 			fmt.Println("Received timeout signal")
+// 			return nil
+// 		case <-osSignalChan:
+// 			fmt.Println("Received shutdown signal")
+// 			return nil
+// 		case keyEvent := <-keyboardChan:
+// 			var pressedKeyAsString = convertKeyEventToString(keyEvent)
+
+// 			// todo better comment
+// 			// handle uknown key events, we only care about a few numbers, all letters, and space
+// 			if pressedKeyAsString != "" {
+// 				// log it and build the word
+// 				fmt.Printf("Received Key Down For: %v %v %v\n", keyEvent.Message, pressedKeyAsString, reflect.TypeOf(pressedKeyAsString))
+// 				wordSlice = append(wordSlice, pressedKeyAsString)
+// 			}
+
+// 			continue
+// 		}
+// 	}
+
+// }
+
 func TrackPressedKeys(osSignalChan <-chan os.Signal, keyboardChan <-chan types.KeyboardEvent) error {
-	fmt.Println("start capturing keyboard input")
+	fmt.Println("Start capturing keyboard input")
+	var wordSlice []string
+
 	for {
 		select {
 		case <-time.After(5 * time.Minute):
@@ -20,23 +51,35 @@ func TrackPressedKeys(osSignalChan <-chan os.Signal, keyboardChan <-chan types.K
 			fmt.Println("Received shutdown signal")
 			return nil
 		case keyEvent := <-keyboardChan:
-			var pressedKeyAsString = convertKeyEventToString(keyEvent)
+			pressedKey := convertKeyEventToString(keyEvent)
 
-			// todo better comment
-			// handle uknown key events, we only care about a few numbers, all letters, and space
-			if pressedKeyAsString != "" {
-				// log it and build the word
-				fmt.Printf("Received Key Down For: %v %v %v\n", keyEvent.Message, pressedKeyAsString, reflect.TypeOf(pressedKeyAsString))
+			// Handle known key events
+			if pressedKey != "" {
+				fmt.Printf("Received Key Down For: %v\n", pressedKey)
 
-				var wordSlice = processPressedKeyStrings(pressedKeyAsString)
-				if len(wordSlice) > 0 {
-					fmt.Printf("New word found: %v\n", wordSlice)
+				// Check if the Space key is pressed to complete the word
+				if pressedKey == "Space" || pressedKey == "Enter" {
+					// Join wordSlice into a complete word
+					word := strings.Join(wordSlice, "")
+					fmt.Printf("Complete Word: %s\n", word)
+
+					// Optionally do something with the complete word
+					go goDoWorkWithWord(word)
+
+					// Reset wordSlice for the next word
+					wordSlice = nil
+				} else {
+					// Add pressed key to wordSlice
+					wordSlice = append(wordSlice, pressedKey)
 				}
 			}
-
-			continue
 		}
 	}
+}
+
+// todo mock
+func goDoWorkWithWord(word string) {
+	fmt.Printf("Full Word Is: %v\n", word)
 }
 
 // todo consider renaming pressedKey and simplifying
@@ -67,24 +110,6 @@ func getKeyEventType(event types.KeyboardEvent) string {
 	}
 }
 
-// todo consider swtich statmetn use
-// todo fix this keep it simple, get it to work, write tests, then make it better
-func processPressedKeyStrings(pressedKey string) []string {
-	fmt.Printf("Entering: processingPressedKeyStrings...\n")
-	// todo consider using length as capacity default, or handling a warning log for ui elsewhere
-	var wordSlice []string = make([]string, 10, 20)
-	// add to slice when not space
-	if pressedKey != "Space" {
-		wordSlice = append(wordSlice, pressedKey)
-	}
-	// if space return word
-	if pressedKey == "Space" {
-
-		fmt.Printf("Exiting bc Space:  processingPressedKeyStrings...\n")
-		return wordSlice
-	}
-	// else return the empty word slice and check it elsewhere
-	emptySlice := make([]string, 0)
-	fmt.Printf("Exiting empty:  processingPressedKeyStrings...\n")
-	return emptySlice
+func buildWordFromKeyPressStrings(keyPressString string) {
+	panic("buildWordFromKeyPressStrings Not Implemented")
 }

@@ -1,4 +1,10 @@
+// wordProcessingUtils/wordProcessing.go
 package wordProcessingUtils
+
+type WordForProcess struct {
+	WordSlice []string
+	Word      string
+}
 
 // TODO - probably let this be a map for prototyping but will be a db or cache in mem
 // TODO - this will be done with go routines for checking a lot of words super fast
