@@ -30,42 +30,13 @@ func main() {
 	log.SetFlags(0)
 	log.SetPrefix("error: ")
 
-	if err := runKeyBlock(); err != nil {
+	if err := startup(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-// TODO look up more of this code to understand it / how go work
-// func runKeyBlock() error {
-// 	// Buffer size depends on your need. The 100 is placeholder value.
-// 	// Initialize Keyboard Channel
-// 	keyboardChan := make(chan types.KeyboardEvent, 100)
-
-// 	if err := keyboard.Install(nil, keyboardChan); err != nil {
-// 		return err
-// 	}
-
-// 	defer keyboard.Uninstall()
-
-// 	// Initialzie OS Channel
-// 	osSignalChan := make(chan os.Signal, 1)
-// 	signal.Notify(osSignalChan, os.Interrupt)
-// 	// todo consider placing the above in its own function for iniazlizing keyboard reading or something like that
-// 	// var word wordProcessingUtils;
-// 	// word := wordProcessingUtils.WordForProcess{
-// 	// 	WordSlice: make([]string, 10),
-// 	// 	Word:      "",
-// 	// }
-// 	// fmt.Printf("%v\n", word)
-
-// 	// TODO: for all methods here, make a process method to handle them in order and keep main clean
-// 	var trackedKeyEvents = keyEventMappingUtils.TrackPressedKeys(osSignalChan, keyboardChan)
-
-// 	return trackedKeyEvents
-// }
-
-func runKeyBlock() error {
-	fmt.Println("Hello from runKeyBlock")
+func startup() error {
+	fmt.Println("Starting up key-block application...")
 
 	log.SetFlags(0)
 	log.SetPrefix("error: ")
@@ -85,12 +56,12 @@ func runKeyBlock() error {
 		trackedKeyEvents <- keyEventMappingUtils.TrackPressedKeys(osSignalChan, keyboardChan)
 	}()
 
-	// Example of concurrently doing other tasks (replace with your logic)
+	// concurrently doing other tasks
 	var word string
 	for {
 		select {
 		case <-osSignalChan:
-			fmt.Println("Received shutdown signal")
+			fmt.Println("Received shutdown signal...")
 			return nil
 		case err := <-trackedKeyEvents:
 			if err != nil {
