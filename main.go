@@ -1,5 +1,7 @@
 package main
 
+// TODO clean up folder stucture, don't name things like its javascript, follow k6 patterns
+
 // TODO cleanup: Add a thoughtful folder structure to code chaning method names as appropriate
 // TODO cleanup: Add idomatic comments to all methods
 // TODO cleanup: consider this when thinking about external dependencies as apart of final
